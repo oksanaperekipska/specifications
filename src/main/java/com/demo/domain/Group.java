@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,7 +45,7 @@ public class Group implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Tag> tags = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = "groups", allowSetters = true)
     private Person superAdmin;
 
@@ -55,7 +56,19 @@ public class Group implements Serializable {
                inverseJoinColumns = @JoinColumn(name = "members_id", referencedColumnName = "id"))
     private Set<Person> members = new HashSet<>();
 
+    private Instant createdAt = Instant.now();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public Long getId() {
         return id;
     }

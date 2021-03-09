@@ -1,4 +1,4 @@
-package com.demo.service;
+package com.demo.service.filter;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import io.github.jhipster.service.QueryService;
 import com.demo.domain.Person;
 import com.demo.domain.*; // for static metamodels
 import com.demo.repository.PersonRepository;
-import com.demo.service.dto.PersonCriteria;
+import com.demo.service.filter.criteria.PersonCriteria;
 import com.demo.service.dto.PersonDTO;
 import com.demo.service.mapper.PersonMapper;
 
@@ -48,10 +48,11 @@ public class PersonQueryService extends QueryService<Person> {
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
-    public List<PersonDTO> findByCriteria(PersonCriteria criteria) {
+    public Page<PersonDTO> findByCriteria(PersonCriteria criteria, Pageable pageable) {
         log.debug("find by criteria : {}", criteria);
         final Specification<Person> specification = createSpecification(criteria);
-        return personMapper.toDto(personRepository.findAll(specification));
+        return personRepository.findAll(specification, pageable)
+            .map(personMapper::toDto);
     }
 
     /**

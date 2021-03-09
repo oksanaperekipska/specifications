@@ -9,8 +9,7 @@ import com.demo.repository.PersonRepository;
 import com.demo.service.PersonService;
 import com.demo.service.dto.PersonDTO;
 import com.demo.service.mapper.PersonMapper;
-import com.demo.service.dto.PersonCriteria;
-import com.demo.service.PersonQueryService;
+import com.demo.service.filter.PersonQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
