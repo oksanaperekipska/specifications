@@ -1,0 +1,4 @@
+id;name;type;notification;super_admin_id
+1;Cats;PRIVATE;true;1
+2;News;PUBLIC;false;2
+3;Small Talks;PUBLIC;true;3

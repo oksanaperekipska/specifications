@@ -1,0 +1,44 @@
+entity Person {
+    name String required
+    username String
+    phone String
+    status PersonStatus required
+    lastActiveAt Instant required
+}
+
+entity Group {
+	name String required
+    type GroupType required
+    notification Boolean
+}
+
+entity Tag {
+	name String required
+}
+
+relationship ManyToMany {
+	Group{members} to Person{group}
+}
+
+relationship ManyToOne {
+	Group{superAdmin} to Person
+}
+
+relationship OneToMany {
+	Group{tags} to Tag
+}
+
+enum PersonStatus {
+	ONLINE,
+	BUSY,
+	OFFLINE
+}
+
+enum GroupType {
+	PRIVATE,
+	PUBLIC
+}
+
+dto * with mapstruct
+
+filter Person

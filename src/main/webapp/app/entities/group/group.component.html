@@ -1,0 +1,77 @@
+<div>
+    <h2 id="page-heading">
+        <span>Groups</span>
+
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-group" [routerLink]="['/group/new']">
+            <fa-icon icon="plus"></fa-icon>
+            <span>
+            Create a new Group
+            </span>
+        </button>
+    </h2>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <jhi-alert></jhi-alert>
+
+    <div class="alert alert-warning" id="no-result" *ngIf="groups?.length === 0">
+        <span>No groups found</span>
+    </div>
+
+    <div class="table-responsive" id="entities" *ngIf="groups && groups.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+                <tr>
+                    <th scope="col" ><span>ID</span></th>
+                    <th scope="col" ><span>Name</span></th>
+                    <th scope="col" ><span>Type</span></th>
+                    <th scope="col" ><span>Notification</span></th>
+                    <th scope="col" ><span>Super Admin</span></th>
+                    <th scope="col" ><span>Members</span></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let group of groups ;trackBy: trackId">
+                    <td><a [routerLink]="['/group', group.id, 'view']">{{ group.id }}</a></td>
+                    <td>{{ group.name }}</td>
+                    <td>{{ group.type }}</td>
+                    <td>{{ group.notification }}</td>
+                    <td>
+                        <div *ngIf="group.superAdminId">
+                            <a [routerLink]="['/person', group.superAdminId , 'view']" >{{ group.superAdminId }}</a>
+                        </div>
+                    </td>
+                    <td>
+                        <span *ngFor="let members of group.members; let last = last">
+                            <a class="form-control-static" [routerLink]="['/person', members?.id, 'view']">{{ members.id }}</a>{{ last ? '' : ', ' }}
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="submit"
+                                    [routerLink]="['/group', group.id, 'view']"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon icon="eye"></fa-icon>
+                                <span class="d-none d-md-inline">View</span>
+                            </button>
+
+                            <button type="submit"
+                                    [routerLink]="['/group', group.id, 'edit']"
+                                    class="btn btn-primary btn-sm">
+                                <fa-icon icon="pencil-alt"></fa-icon>
+                                <span class="d-none d-md-inline">Edit</span>
+                            </button>
+
+                            <button type="submit" (click)="delete(group)"
+                                    class="btn btn-danger btn-sm">
+                                <fa-icon icon="times"></fa-icon>
+                                <span class="d-none d-md-inline">Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

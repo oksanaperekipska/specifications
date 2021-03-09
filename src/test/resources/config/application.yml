@@ -33,7 +33,7 @@ spring:
   jpa:
     database-platform: io.github.jhipster.domain.util.FixedH2Dialect
     open-in-view: false
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: none
       naming:
@@ -48,7 +48,7 @@ spring:
       hibernate.hbm2ddl.auto: validate
       hibernate.jdbc.time_zone: UTC
   liquibase:
-    contexts: test
+    contexts: test, faker
   mail:
     host: localhost
   main:

@@ -1,0 +1,50 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="group">
+            <h2><span>Group</span> {{ group.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span>Name</span></dt>
+                <dd>
+                    <span>{{ group.name }}</span>
+                </dd>
+                <dt><span>Type</span></dt>
+                <dd>
+                    <span>{{ group.type }}</span>
+                </dd>
+                <dt><span>Notification</span></dt>
+                <dd>
+                    <span>{{ group.notification }}</span>
+                </dd>
+                <dt><span>Super Admin</span></dt>
+                <dd>
+                    <div *ngIf="group.superAdminId">
+                        <a [routerLink]="['/person', group.superAdminId, 'view']">{{ group.superAdminId }}</a>
+                    </div>
+                </dd>
+                <dt><span>Members</span></dt>
+                <dd>
+                    <span *ngFor="let members of group.members; let last = last">
+                        <a [routerLink]="['/person', members?.id, 'view']">{{ members.id }}</a>{{ last ? '' : ', ' }}
+                    </span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/group', group.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
