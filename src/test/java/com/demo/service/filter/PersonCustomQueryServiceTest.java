@@ -35,7 +35,7 @@ public class PersonCustomQueryServiceTest {
         criteria.setGroupId(groupsFilter);
 
         var pageable = Pageable.unpaged();
-        pageable = PageRequest.of(0, 2);
+        pageable = PageRequest.of(1, 2);
 
         // When
         var people = personQueryService.findByCriteria(criteria, pageable);

@@ -108,7 +108,7 @@ public class GroupCustomQueryService extends CustomQueryService<Group> {
                     wrapLikeQuery(criteria.getSuperAdminNameContains()))
             );
 
-        if (criteria.getSuperAdminNameContains() != null)
+        if (criteria.getSuperAdminPhoneContains() != null)
             specification = specification.and((root, query, builder) ->
                 builder.like(
                     builder.upper(root.join(Group_.superAdmin, JoinType.LEFT).get(Person_.phone)),

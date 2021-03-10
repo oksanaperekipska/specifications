@@ -44,10 +44,8 @@ public class CustomQueryService<E> {
                                                                              Collection<A> filter) {
         if (filter == null) return specification;
 
-        specification = specification.and((root, query, builder) ->
+        return specification.and((root, query, builder) ->
             in(r -> r.get(attr), filter, root, builder));
-
-        return specification;
     }
 
     protected <A extends Comparable<? super A>> Specification<E> andInFilter(Specification<E> specification,
@@ -55,10 +53,8 @@ public class CustomQueryService<E> {
                                                                              Collection<A> filter) {
         if (filter == null) return specification;
 
-        specification = specification.and((root, query, builder) ->
+        return specification.and((root, query, builder) ->
             in(attrFunc, filter, root, builder));
-
-        return specification;
     }
 
     private <A extends Comparable<? super A>> CriteriaBuilder.In<A> in(Function<Root<E>, Expression<A>> attrFunc, Collection<A> filter, Root<E> root, CriteriaBuilder builder) {
@@ -72,10 +68,8 @@ public class CustomQueryService<E> {
                                                  String stringFilter) {
         if (stringFilter == null) return specification;
 
-        specification = specification.and((root, query, builder) ->
+       return specification.and((root, query, builder) ->
             contains(root.get(attr), stringFilter, builder));
-
-        return specification;
     }
 
     protected Specification<E> andContainsFilter(Specification<E> specification,
@@ -83,10 +77,8 @@ public class CustomQueryService<E> {
                                                  String stringFilter) {
         if (stringFilter == null) return specification;
 
-        specification = specification.and((root, query, builder) ->
+        return specification.and((root, query, builder) ->
             contains(attrFunc.apply(root), stringFilter, builder));
-
-        return specification;
     }
 
     protected Predicate contains(Expression<String> path, String stringFilter, CriteriaBuilder builder) {
@@ -100,11 +92,9 @@ public class CustomQueryService<E> {
                                                      String wordFilter) {
         if (wordFilter == null) return specification;
 
-        specification = specification.and((root, query, builder) ->
+        return specification.and((root, query, builder) ->
             containsWord(root.get(attr), wordFilter, builder)
         );
-
-        return specification;
     }
 
     protected Predicate containsWord(Path<String> path,
@@ -120,15 +110,13 @@ public class CustomQueryService<E> {
                                                             Collection<F> wordsFilter) {
         if (wordsFilter == null) return specification;
 
-        specification = specification.and((root, query, builder) -> {
+        return specification.and((root, query, builder) -> {
             Predicate[] predicates = wordsFilter.stream()
                 .map(wordFilter -> containsWord(root.get(attr), wordFilter.toString(), builder))
                 .toArray(Predicate[]::new);
 
             return builder.or(predicates);
         });
-
-        return specification;
     }
 
     protected String wrapLikeQuery(String txt) {

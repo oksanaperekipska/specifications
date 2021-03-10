@@ -92,7 +92,7 @@ public class PersonQueryService extends QueryService<Person> {
             }
             if (criteria.getStatus() != null) {
                 specification = specification.and(buildSpecification(criteria.getStatus(),
-                    root -> root.join(Person_.status, JoinType.LEFT).get(PersonStatus_.code)));
+                    root -> root.get(Person_.status).get(PersonStatus_.code)));
             }
             if (criteria.getGroupId() != null) {
                 specification = specification.and(buildSpecification(criteria.getGroupId(),
