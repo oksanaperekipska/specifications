@@ -1,6 +1,14 @@
 # specifications
 
-This application was generated using JHipster 6.10.5, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.10.5](https://www.jhipster.tech/documentation-archive/v6.10.5).
+Filtering query services:
+
+1. PersonQueryService
+2. GroupCustomQueryService extends CustomQueryService
+
+Test classes:
+
+1. PersonCustomQueryServiceTest
+2. GroupCustomQueryServiceTest
 
 ## Development
 
