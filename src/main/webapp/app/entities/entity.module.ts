@@ -16,6 +16,10 @@ import { RouterModule } from '@angular/router';
         path: 'tag',
         loadChildren: () => import('./tag/tag.module').then(m => m.SpecificationsTagModule),
       },
+      {
+        path: 'person-status',
+        loadChildren: () => import('./person-status/person-status.module').then(m => m.SpecificationsPersonStatusModule),
+      },
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),
   ],

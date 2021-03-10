@@ -1,6 +1,7 @@
 package com.demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -11,8 +12,6 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.demo.domain.enumeration.PersonStatus;
 
 /**
  * A Person.
@@ -40,13 +39,13 @@ public class Person implements Serializable {
     private String phone;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private PersonStatus status;
-
-    @NotNull
     @Column(name = "last_active_at", nullable = false)
     private Instant lastActiveAt;
+
+    @NotNull
+    @ManyToOne
+    @JsonIgnoreProperties(value = "people", allowSetters = true)
+    private PersonStatus status;
 
     @ManyToMany(mappedBy = "members")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -101,19 +100,6 @@ public class Person implements Serializable {
         this.phone = phone;
     }
 
-    public PersonStatus getStatus() {
-        return status;
-    }
-
-    public Person status(PersonStatus status) {
-        this.status = status;
-        return this;
-    }
-
-    public void setStatus(PersonStatus status) {
-        this.status = status;
-    }
-
     public Instant getLastActiveAt() {
         return lastActiveAt;
     }
@@ -125,6 +111,19 @@ public class Person implements Serializable {
 
     public void setLastActiveAt(Instant lastActiveAt) {
         this.lastActiveAt = lastActiveAt;
+    }
+
+    public PersonStatus getStatus() {
+        return status;
+    }
+
+    public Person status(PersonStatus personStatus) {
+        this.status = personStatus;
+        return this;
+    }
+
+    public void setStatus(PersonStatus personStatus) {
+        this.status = personStatus;
     }
 
     public Set<Group> getGroups() {
@@ -177,7 +176,6 @@ public class Person implements Serializable {
             ", name='" + getName() + "'" +
             ", username='" + getUsername() + "'" +
             ", phone='" + getPhone() + "'" +
-            ", status='" + getStatus() + "'" +
             ", lastActiveAt='" + getLastActiveAt() + "'" +
             "}";
     }

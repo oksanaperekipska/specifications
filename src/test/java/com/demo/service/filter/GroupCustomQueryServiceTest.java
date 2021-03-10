@@ -47,7 +47,7 @@ public class GroupCustomQueryServiceTest {
         CriteriaQuery<Group> query = builder.createQuery(Group.class);
         Root<Group> root = query.from(Group.class);
 
-        Predicate predicate1 = builder.greaterThan(root.get(Group_.createdAt), Instant.now().minus(1, ChronoUnit.YEARS));
+        Predicate predicate1 = builder.greaterThan(root.get(Group_.createdAt), Instant.now().minus(30, ChronoUnit.DAYS));
         Predicate predicate2 = builder.lessThan(root.get(Group_.createdAt), Instant.now());
 
         EntityGraph<Group> entityGraph = em.createEntityGraph(Group.class);

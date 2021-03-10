@@ -9,9 +9,11 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link Person} and its DTO {@link PersonDTO}.
  */
-@Mapper(componentModel = "spring", uses = {})
+@Mapper(componentModel = "spring", uses = {PersonStatusMapper.class})
 public interface PersonMapper extends EntityMapper<PersonDTO, Person> {
 
+    @Mapping(source = "status.code", target = "status")
+    PersonDTO toDto(Person person);
 
     @Mapping(target = "groups", ignore = true)
     @Mapping(target = "removeGroup", ignore = true)

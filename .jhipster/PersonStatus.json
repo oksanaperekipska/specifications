@@ -1,0 +1,32 @@
+{
+  "name": "PersonStatus",
+  "fields": [
+    {
+      "fieldName": "code",
+      "fieldType": "PStatus",
+      "fieldValues": "ONLINE,BUSY,OFFLINE",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "title",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [],
+  "changelogDate": "20210310130257",
+  "entityTableName": "person_status",
+  "dto": "mapstruct",
+  "pagination": "no",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

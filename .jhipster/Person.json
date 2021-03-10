@@ -15,18 +15,19 @@
       "fieldType": "String"
     },
     {
-      "fieldName": "status",
-      "fieldType": "PersonStatus",
-      "fieldValues": "ONLINE,BUSY,OFFLINE",
-      "fieldValidateRules": ["required"]
-    },
-    {
       "fieldName": "lastActiveAt",
       "fieldType": "Instant",
       "fieldValidateRules": ["required"]
     }
   ],
   "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "personStatus",
+      "otherEntityRelationshipName": "person",
+      "relationshipName": "status",
+      "otherEntityField": "id"
+    },
     {
       "relationshipType": "many-to-many",
       "otherEntityName": "group",

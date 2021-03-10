@@ -5,7 +5,6 @@ import com.demo.config.TestSecurityConfiguration;
 import com.demo.domain.Person_;
 import com.demo.service.filter.criteria.PersonCriteria;
 import com.demo.service.dto.PersonDTO;
-import com.demo.service.filter.PersonQueryService;
 import com.google.common.base.Strings;
 import io.github.jhipster.service.filter.LongFilter;
 import org.jetbrains.annotations.NotNull;

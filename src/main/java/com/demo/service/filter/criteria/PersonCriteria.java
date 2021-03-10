@@ -2,8 +2,9 @@ package com.demo.service.filter.criteria;
 
 import java.io.Serializable;
 import java.util.Objects;
+
+import com.demo.domain.enumeration.PStatus;
 import io.github.jhipster.service.Criteria;
-import com.demo.domain.enumeration.PersonStatus;
 import io.github.jhipster.service.filter.Filter;
 import io.github.jhipster.service.filter.LongFilter;
 import io.github.jhipster.service.filter.StringFilter;
@@ -20,21 +21,9 @@ import io.github.jhipster.service.filter.InstantFilter;
  */
 public class PersonCriteria implements Serializable, Criteria {
     /**
-     * Class for filtering PersonStatus
+     * Class for filtering PStatus
      */
-    public static class PersonStatusFilter extends Filter<PersonStatus> {
-
-        public PersonStatusFilter() {
-        }
-
-        public PersonStatusFilter(PersonStatusFilter filter) {
-            super(filter);
-        }
-
-        @Override
-        public PersonStatusFilter copy() {
-            return new PersonStatusFilter(this);
-        }
+    public static class PStatusFilter extends Filter<PStatus> {
 
     }
 
@@ -48,9 +37,9 @@ public class PersonCriteria implements Serializable, Criteria {
 
     private StringFilter phone;
 
-    private PersonStatusFilter status;
-
     private InstantFilter lastActiveAt;
+
+    private PStatusFilter status;
 
     private LongFilter groupId;
 
@@ -62,8 +51,8 @@ public class PersonCriteria implements Serializable, Criteria {
         this.name = other.name == null ? null : other.name.copy();
         this.username = other.username == null ? null : other.username.copy();
         this.phone = other.phone == null ? null : other.phone.copy();
-        this.status = other.status == null ? null : other.status.copy();
         this.lastActiveAt = other.lastActiveAt == null ? null : other.lastActiveAt.copy();
+        this.status = other.status == null ? null : (PStatusFilter) other.status.copy();
         this.groupId = other.groupId == null ? null : other.groupId.copy();
     }
 
@@ -104,20 +93,20 @@ public class PersonCriteria implements Serializable, Criteria {
         this.phone = phone;
     }
 
-    public PersonStatusFilter getStatus() {
-        return status;
-    }
-
-    public void setStatus(PersonStatusFilter status) {
-        this.status = status;
-    }
-
     public InstantFilter getLastActiveAt() {
         return lastActiveAt;
     }
 
     public void setLastActiveAt(InstantFilter lastActiveAt) {
         this.lastActiveAt = lastActiveAt;
+    }
+
+    public PStatusFilter getStatus() {
+        return status;
+    }
+
+    public void setStatus(PStatusFilter status) {
+        this.status = status;
     }
 
     public LongFilter getGroupId() {
@@ -143,8 +132,8 @@ public class PersonCriteria implements Serializable, Criteria {
             Objects.equals(name, that.name) &&
             Objects.equals(username, that.username) &&
             Objects.equals(phone, that.phone) &&
-            Objects.equals(status, that.status) &&
             Objects.equals(lastActiveAt, that.lastActiveAt) &&
+            Objects.equals(status, that.status) &&
             Objects.equals(groupId, that.groupId);
     }
 
@@ -155,8 +144,8 @@ public class PersonCriteria implements Serializable, Criteria {
         name,
         username,
         phone,
-        status,
         lastActiveAt,
+            status,
         groupId
         );
     }
@@ -169,8 +158,8 @@ public class PersonCriteria implements Serializable, Criteria {
                 (name != null ? "name=" + name + ", " : "") +
                 (username != null ? "username=" + username + ", " : "") +
                 (phone != null ? "phone=" + phone + ", " : "") +
-                (status != null ? "status=" + status + ", " : "") +
                 (lastActiveAt != null ? "lastActiveAt=" + lastActiveAt + ", " : "") +
+                (status != null ? "status=" + status + ", " : "") +
                 (groupId != null ? "groupId=" + groupId + ", " : "") +
             "}";
     }

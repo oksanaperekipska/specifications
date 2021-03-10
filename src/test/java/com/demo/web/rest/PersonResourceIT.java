@@ -2,15 +2,16 @@ package com.demo.web.rest;
 
 import com.demo.SpecificationsApp;
 import com.demo.config.TestSecurityConfiguration;
-import com.demo.domain.Person;
 import com.demo.domain.Group;
+import com.demo.domain.Person;
+import com.demo.domain.PersonStatus;
 import com.demo.domain.Tag;
+import com.demo.domain.enumeration.PStatus;
 import com.demo.repository.PersonRepository;
 import com.demo.service.PersonService;
 import com.demo.service.dto.PersonDTO;
-import com.demo.service.mapper.PersonMapper;
 import com.demo.service.filter.PersonQueryService;
-
+import com.demo.service.mapper.PersonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -31,7 +33,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.demo.domain.enumeration.PersonStatus;
 /**
  * Integration tests for the {@link PersonResource} REST controller.
  */
@@ -49,11 +50,11 @@ public class PersonResourceIT {
     private static final String DEFAULT_PHONE = "AAAAAAAAAA";
     private static final String UPDATED_PHONE = "BBBBBBBBBB";
 
-    private static final PersonStatus DEFAULT_STATUS = PersonStatus.ONLINE;
-    private static final PersonStatus UPDATED_STATUS = PersonStatus.BUSY;
-
     private static final Instant DEFAULT_LAST_ACTIVE_AT = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_LAST_ACTIVE_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
+    private static final PStatus DEFAULT_STATUS = PStatus.ONLINE;
+    private static final PStatus UPDATED_STATUS = PStatus.BUSY;
 
     @Autowired
     private PersonRepository personRepository;
@@ -82,11 +83,12 @@ public class PersonResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Person createEntity(EntityManager em) {
+        PersonStatus status = em.find(PersonStatus.class, DEFAULT_STATUS);
         Person person = new Person()
+            .status(status)
             .name(DEFAULT_NAME)
             .username(DEFAULT_USERNAME)
             .phone(DEFAULT_PHONE)
-            .status(DEFAULT_STATUS)
             .lastActiveAt(DEFAULT_LAST_ACTIVE_AT);
         return person;
     }
@@ -97,11 +99,12 @@ public class PersonResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Person createUpdatedEntity(EntityManager em) {
+        PersonStatus status = em.find(PersonStatus.class, UPDATED_STATUS);
         Person person = new Person()
+            .status(status)
             .name(UPDATED_NAME)
             .username(UPDATED_USERNAME)
             .phone(UPDATED_PHONE)
-            .status(UPDATED_STATUS)
             .lastActiveAt(UPDATED_LAST_ACTIVE_AT);
         return person;
     }
@@ -129,10 +132,10 @@ public class PersonResourceIT {
         List<Person> personList = personRepository.findAll();
         assertThat(personList).hasSize(databaseSizeBeforeCreate + 1);
         Person testPerson = personList.get(personList.size() - 1);
+        assertThat(testPerson.getStatus().getCode()).isEqualTo(DEFAULT_STATUS);
         assertThat(testPerson.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testPerson.getUsername()).isEqualTo(DEFAULT_USERNAME);
         assertThat(testPerson.getPhone()).isEqualTo(DEFAULT_PHONE);
-        assertThat(testPerson.getStatus()).isEqualTo(DEFAULT_STATUS);
         assertThat(testPerson.getLastActiveAt()).isEqualTo(DEFAULT_LAST_ACTIVE_AT);
     }
 
@@ -163,26 +166,6 @@ public class PersonResourceIT {
         int databaseSizeBeforeTest = personRepository.findAll().size();
         // set the field null
         person.setName(null);
-
-        // Create the Person, which fails.
-        PersonDTO personDTO = personMapper.toDto(person);
-
-
-        restPersonMockMvc.perform(post("/api/people").with(csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(personDTO)))
-            .andExpect(status().isBadRequest());
-
-        List<Person> personList = personRepository.findAll();
-        assertThat(personList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    public void checkStatusIsRequired() throws Exception {
-        int databaseSizeBeforeTest = personRepository.findAll().size();
-        // set the field null
-        person.setStatus(null);
 
         // Create the Person, which fails.
         PersonDTO personDTO = personMapper.toDto(person);
@@ -231,7 +214,6 @@ public class PersonResourceIT {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].username").value(hasItem(DEFAULT_USERNAME)))
             .andExpect(jsonPath("$.[*].phone").value(hasItem(DEFAULT_PHONE)))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].lastActiveAt").value(hasItem(DEFAULT_LAST_ACTIVE_AT.toString())));
     }
 
@@ -249,7 +231,6 @@ public class PersonResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.username").value(DEFAULT_USERNAME))
             .andExpect(jsonPath("$.phone").value(DEFAULT_PHONE))
-            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
             .andExpect(jsonPath("$.lastActiveAt").value(DEFAULT_LAST_ACTIVE_AT.toString()));
     }
 
@@ -509,58 +490,6 @@ public class PersonResourceIT {
 
     @Test
     @Transactional
-    public void getAllPeopleByStatusIsEqualToSomething() throws Exception {
-        // Initialize the database
-        personRepository.saveAndFlush(person);
-
-        // Get all the personList where status equals to DEFAULT_STATUS
-        defaultPersonShouldBeFound("status.equals=" + DEFAULT_STATUS);
-
-        // Get all the personList where status equals to UPDATED_STATUS
-        defaultPersonShouldNotBeFound("status.equals=" + UPDATED_STATUS);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPeopleByStatusIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        personRepository.saveAndFlush(person);
-
-        // Get all the personList where status not equals to DEFAULT_STATUS
-        defaultPersonShouldNotBeFound("status.notEquals=" + DEFAULT_STATUS);
-
-        // Get all the personList where status not equals to UPDATED_STATUS
-        defaultPersonShouldBeFound("status.notEquals=" + UPDATED_STATUS);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPeopleByStatusIsInShouldWork() throws Exception {
-        // Initialize the database
-        personRepository.saveAndFlush(person);
-
-        // Get all the personList where status in DEFAULT_STATUS or UPDATED_STATUS
-        defaultPersonShouldBeFound("status.in=" + DEFAULT_STATUS + "," + UPDATED_STATUS);
-
-        // Get all the personList where status equals to UPDATED_STATUS
-        defaultPersonShouldNotBeFound("status.in=" + UPDATED_STATUS);
-    }
-
-    @Test
-    @Transactional
-    public void getAllPeopleByStatusIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        personRepository.saveAndFlush(person);
-
-        // Get all the personList where status is not null
-        defaultPersonShouldBeFound("status.specified=true");
-
-        // Get all the personList where status is null
-        defaultPersonShouldNotBeFound("status.specified=false");
-    }
-
-    @Test
-    @Transactional
     public void getAllPeopleByLastActiveAtIsEqualToSomething() throws Exception {
         // Initialize the database
         personRepository.saveAndFlush(person);
@@ -613,6 +542,21 @@ public class PersonResourceIT {
 
     @Test
     @Transactional
+    public void getAllPeopleByStatusIsEqualToSomething() throws Exception {
+        // Initialize the database
+        personRepository.saveAndFlush(person);
+        PStatus statusCode = person.getStatus().getCode();
+
+        // Get all the personList where status equals to status
+        defaultPersonShouldBeFound("status.equals=" + statusCode);
+
+        // Get all the personList where status equals to status + 1
+        defaultPersonShouldNotBeFound("status.equals=" + (UPDATED_STATUS));
+    }
+
+
+    @Test
+    @Transactional
     public void getAllPeopleByGroupIsEqualToSomething() throws Exception {
         // Initialize the database
         personRepository.saveAndFlush(person);
@@ -641,7 +585,6 @@ public class PersonResourceIT {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].username").value(hasItem(DEFAULT_USERNAME)))
             .andExpect(jsonPath("$.[*].phone").value(hasItem(DEFAULT_PHONE)))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].lastActiveAt").value(hasItem(DEFAULT_LAST_ACTIVE_AT.toString())));
 
         // Check, that the count call also returns 1
@@ -689,10 +632,10 @@ public class PersonResourceIT {
         // Disconnect from session so that the updates on updatedPerson are not directly saved in db
         em.detach(updatedPerson);
         updatedPerson
+            .status(em.find(PersonStatus.class, UPDATED_STATUS))
             .name(UPDATED_NAME)
             .username(UPDATED_USERNAME)
             .phone(UPDATED_PHONE)
-            .status(UPDATED_STATUS)
             .lastActiveAt(UPDATED_LAST_ACTIVE_AT);
         PersonDTO personDTO = personMapper.toDto(updatedPerson);
 
@@ -705,10 +648,10 @@ public class PersonResourceIT {
         List<Person> personList = personRepository.findAll();
         assertThat(personList).hasSize(databaseSizeBeforeUpdate);
         Person testPerson = personList.get(personList.size() - 1);
+        assertThat(testPerson.getStatus().getCode()).isEqualTo(UPDATED_STATUS);
         assertThat(testPerson.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testPerson.getUsername()).isEqualTo(UPDATED_USERNAME);
         assertThat(testPerson.getPhone()).isEqualTo(UPDATED_PHONE);
-        assertThat(testPerson.getStatus()).isEqualTo(UPDATED_STATUS);
         assertThat(testPerson.getLastActiveAt()).isEqualTo(UPDATED_LAST_ACTIVE_AT);
     }
 

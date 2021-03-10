@@ -20,13 +20,15 @@
                 <dd>
                     <span>{{ person.phone }}</span>
                 </dd>
-                <dt><span>Status</span></dt>
-                <dd>
-                    <span>{{ person.status }}</span>
-                </dd>
                 <dt><span>Last Active At</span></dt>
                 <dd>
                     <span>{{ person.lastActiveAt }}</span>
+                </dd>
+                <dt><span>Status</span></dt>
+                <dd>
+                    <div *ngIf="person.statusId">
+                        <a [routerLink]="['/person-status', person.statusId, 'view']">{{ person.statusId }}</a>
+                    </div>
                 </dd>
             </dl>
 

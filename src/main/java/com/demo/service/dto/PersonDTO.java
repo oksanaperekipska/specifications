@@ -1,15 +1,16 @@
 package com.demo.service.dto;
 
+import com.demo.domain.enumeration.PStatus;
+
 import java.time.Instant;
 import javax.validation.constraints.*;
 import java.io.Serializable;
-import com.demo.domain.enumeration.PersonStatus;
 
 /**
  * A DTO for the {@link com.demo.domain.Person} entity.
  */
 public class PersonDTO implements Serializable {
-    
+
     private Long id;
 
     @NotNull
@@ -20,12 +21,11 @@ public class PersonDTO implements Serializable {
     private String phone;
 
     @NotNull
-    private PersonStatus status;
+    private PStatus status;
 
     @NotNull
     private Instant lastActiveAt;
 
-    
     public Long getId() {
         return id;
     }
@@ -58,20 +58,20 @@ public class PersonDTO implements Serializable {
         this.phone = phone;
     }
 
-    public PersonStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PersonStatus status) {
-        this.status = status;
-    }
-
     public Instant getLastActiveAt() {
         return lastActiveAt;
     }
 
     public void setLastActiveAt(Instant lastActiveAt) {
         this.lastActiveAt = lastActiveAt;
+    }
+
+    public PStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PStatus status) {
+        this.status = status;
     }
 
     @Override
@@ -99,7 +99,6 @@ public class PersonDTO implements Serializable {
             ", name='" + getName() + "'" +
             ", username='" + getUsername() + "'" +
             ", phone='" + getPhone() + "'" +
-            ", status='" + getStatus() + "'" +
             ", lastActiveAt='" + getLastActiveAt() + "'" +
             "}";
     }

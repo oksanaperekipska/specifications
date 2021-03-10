@@ -9,6 +9,8 @@ import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 
 import { IPerson, Person } from 'app/shared/model/person.model';
 import { PersonService } from './person.service';
+import { IPersonStatus } from 'app/shared/model/person-status.model';
+import { PersonStatusService } from 'app/entities/person-status/person-status.service';
 
 @Component({
   selector: 'jhi-person-update',
@@ -16,17 +18,23 @@ import { PersonService } from './person.service';
 })
 export class PersonUpdateComponent implements OnInit {
   isSaving = false;
+  personstatuses: IPersonStatus[] = [];
 
   editForm = this.fb.group({
     id: [],
     name: [null, [Validators.required]],
     username: [],
     phone: [],
-    status: [null, [Validators.required]],
     lastActiveAt: [null, [Validators.required]],
+    statusId: [],
   });
 
-  constructor(protected personService: PersonService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
+  constructor(
+    protected personService: PersonService,
+    protected personStatusService: PersonStatusService,
+    protected activatedRoute: ActivatedRoute,
+    private fb: FormBuilder
+  ) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ person }) => {
@@ -36,6 +44,8 @@ export class PersonUpdateComponent implements OnInit {
       }
 
       this.updateForm(person);
+
+      this.personStatusService.query().subscribe((res: HttpResponse<IPersonStatus[]>) => (this.personstatuses = res.body || []));
     });
   }
 
@@ -45,8 +55,8 @@ export class PersonUpdateComponent implements OnInit {
       name: person.name,
       username: person.username,
       phone: person.phone,
-      status: person.status,
       lastActiveAt: person.lastActiveAt ? person.lastActiveAt.format(DATE_TIME_FORMAT) : null,
+      statusId: person.statusId,
     });
   }
 
@@ -71,10 +81,10 @@ export class PersonUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       username: this.editForm.get(['username'])!.value,
       phone: this.editForm.get(['phone'])!.value,
-      status: this.editForm.get(['status'])!.value,
       lastActiveAt: this.editForm.get(['lastActiveAt'])!.value
         ? moment(this.editForm.get(['lastActiveAt'])!.value, DATE_TIME_FORMAT)
         : undefined,
+      statusId: this.editForm.get(['statusId'])!.value,
     };
   }
 
@@ -92,5 +102,9 @@ export class PersonUpdateComponent implements OnInit {
 
   protected onSaveError(): void {
     this.isSaving = false;
+  }
+
+  trackById(index: number, item: IPersonStatus): any {
+    return item.id;
   }
 }

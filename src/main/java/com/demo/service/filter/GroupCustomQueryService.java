@@ -5,7 +5,6 @@ import com.demo.repository.GroupRepository;
 import com.demo.service.dto.GroupCustomDTO;
 import com.demo.service.dto.PersonDTO;
 import com.demo.service.filter.criteria.GroupCustomCriteria;
-import com.demo.service.filter.criteria.PersonCriteria;
 import com.demo.service.mapper.GroupMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -23,12 +22,6 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-/**
- * Service for executing complex queries for {@link Person} entities in the database.
- * The main input is a {@link PersonCriteria} which gets converted to {@link Specification},
- * in a way that all the filters must apply.
- * It returns a {@link List} of {@link PersonDTO} or a {@link Page} of {@link PersonDTO} which fulfills the criteria.
- */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)

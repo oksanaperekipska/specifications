@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.criteria.JoinType;
 
+import com.demo.service.filter.criteria.PersonCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,6 @@ import io.github.jhipster.service.QueryService;
 import com.demo.domain.Person;
 import com.demo.domain.*; // for static metamodels
 import com.demo.repository.PersonRepository;
-import com.demo.service.filter.criteria.PersonCriteria;
 import com.demo.service.dto.PersonDTO;
 import com.demo.service.mapper.PersonMapper;
 
@@ -87,11 +87,12 @@ public class PersonQueryService extends QueryService<Person> {
             if (criteria.getPhone() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getPhone(), Person_.phone));
             }
-            if (criteria.getStatus() != null) {
-                specification = specification.and(buildSpecification(criteria.getStatus(), Person_.status));
-            }
             if (criteria.getLastActiveAt() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getLastActiveAt(), Person_.lastActiveAt));
+            }
+            if (criteria.getStatus() != null) {
+                specification = specification.and(buildSpecification(criteria.getStatus(),
+                    root -> root.join(Person_.status, JoinType.LEFT).get(PersonStatus_.code)));
             }
             if (criteria.getGroupId() != null) {
                 specification = specification.and(buildSpecification(criteria.getGroupId(),

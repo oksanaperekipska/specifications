@@ -1,18 +1,16 @@
 import { TestBed, getTestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import * as moment from 'moment';
-import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
-import { PersonService } from 'app/entities/person/person.service';
-import { IPerson, Person } from 'app/shared/model/person.model';
+import { PersonStatusService } from 'app/entities/person-status/person-status.service';
+import { IPersonStatus, PersonStatus } from 'app/shared/model/person-status.model';
+import { PStatus } from 'app/shared/model/enumerations/p-status.model';
 
 describe('Service Tests', () => {
-  describe('Person Service', () => {
+  describe('PersonStatus Service', () => {
     let injector: TestBed;
-    let service: PersonService;
+    let service: PersonStatusService;
     let httpMock: HttpTestingController;
-    let elemDefault: IPerson;
-    let expectedResult: IPerson | IPerson[] | boolean | null;
-    let currentDate: moment.Moment;
+    let elemDefault: IPersonStatus;
+    let expectedResult: IPersonStatus | IPersonStatus[] | boolean | null;
 
     beforeEach(() => {
       TestBed.configureTestingModule({
@@ -20,21 +18,15 @@ describe('Service Tests', () => {
       });
       expectedResult = null;
       injector = getTestBed();
-      service = injector.get(PersonService);
+      service = injector.get(PersonStatusService);
       httpMock = injector.get(HttpTestingController);
-      currentDate = moment();
 
-      elemDefault = new Person(0, 'AAAAAAA', 'AAAAAAA', 'AAAAAAA', currentDate);
+      elemDefault = new PersonStatus(0, PStatus.ONLINE, 'AAAAAAA', 'AAAAAAA');
     });
 
     describe('Service methods', () => {
       it('should find an element', () => {
-        const returnedFromService = Object.assign(
-          {
-            lastActiveAt: currentDate.format(DATE_TIME_FORMAT),
-          },
-          elemDefault
-        );
+        const returnedFromService = Object.assign({}, elemDefault);
 
         service.find(123).subscribe(resp => (expectedResult = resp.body));
 
@@ -43,46 +35,34 @@ describe('Service Tests', () => {
         expect(expectedResult).toMatchObject(elemDefault);
       });
 
-      it('should create a Person', () => {
+      it('should create a PersonStatus', () => {
         const returnedFromService = Object.assign(
           {
             id: 0,
-            lastActiveAt: currentDate.format(DATE_TIME_FORMAT),
           },
           elemDefault
         );
 
-        const expected = Object.assign(
-          {
-            lastActiveAt: currentDate,
-          },
-          returnedFromService
-        );
+        const expected = Object.assign({}, returnedFromService);
 
-        service.create(new Person()).subscribe(resp => (expectedResult = resp.body));
+        service.create(new PersonStatus()).subscribe(resp => (expectedResult = resp.body));
 
         const req = httpMock.expectOne({ method: 'POST' });
         req.flush(returnedFromService);
         expect(expectedResult).toMatchObject(expected);
       });
 
-      it('should update a Person', () => {
+      it('should update a PersonStatus', () => {
         const returnedFromService = Object.assign(
           {
-            name: 'BBBBBB',
-            username: 'BBBBBB',
-            phone: 'BBBBBB',
-            lastActiveAt: currentDate.format(DATE_TIME_FORMAT),
+            code: 'BBBBBB',
+            title: 'BBBBBB',
+            description: 'BBBBBB',
           },
           elemDefault
         );
 
-        const expected = Object.assign(
-          {
-            lastActiveAt: currentDate,
-          },
-          returnedFromService
-        );
+        const expected = Object.assign({}, returnedFromService);
 
         service.update(expected).subscribe(resp => (expectedResult = resp.body));
 
@@ -91,23 +71,17 @@ describe('Service Tests', () => {
         expect(expectedResult).toMatchObject(expected);
       });
 
-      it('should return a list of Person', () => {
+      it('should return a list of PersonStatus', () => {
         const returnedFromService = Object.assign(
           {
-            name: 'BBBBBB',
-            username: 'BBBBBB',
-            phone: 'BBBBBB',
-            lastActiveAt: currentDate.format(DATE_TIME_FORMAT),
+            code: 'BBBBBB',
+            title: 'BBBBBB',
+            description: 'BBBBBB',
           },
           elemDefault
         );
 
-        const expected = Object.assign(
-          {
-            lastActiveAt: currentDate,
-          },
-          returnedFromService
-        );
+        const expected = Object.assign({}, returnedFromService);
 
         service.query().subscribe(resp => (expectedResult = resp.body));
 
@@ -117,7 +91,7 @@ describe('Service Tests', () => {
         expect(expectedResult).toContainEqual(expected);
       });
 
-      it('should delete a Person', () => {
+      it('should delete a PersonStatus', () => {
         service.delete(123).subscribe(resp => (expectedResult = resp.ok));
 
         const req = httpMock.expectOne({ method: 'DELETE' });

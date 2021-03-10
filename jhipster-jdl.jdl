@@ -2,8 +2,13 @@ entity Person {
     name String required
     username String
     phone String
-    status PersonStatus required
     lastActiveAt Instant required
+}
+
+entity PersonStatus {
+	code PStatus required
+    title String required
+    description String
 }
 
 entity Group {
@@ -22,13 +27,14 @@ relationship ManyToMany {
 
 relationship ManyToOne {
 	Group{superAdmin} to Person
+    Person{status} to PersonStatus
 }
 
 relationship OneToMany {
 	Group{tags} to Tag
 }
 
-enum PersonStatus {
+enum PStatus {
 	ONLINE,
 	BUSY,
 	OFFLINE
